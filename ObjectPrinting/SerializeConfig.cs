@@ -14,11 +14,19 @@ namespace ObjectPrinting
         private readonly PrintingConfig<TOwner> printingConfig;
         private readonly Action<Delegate> ruleAddition;
         private readonly Action<CultureInfo> cultureInfoAddition;
+        private readonly Action<int> setStringTrimming;
 
-        public SerializeConfig(PrintingConfig<TOwner> printingConfig, Action<Delegate> ruleAddition, Action<CultureInfo> cultureInfoAddition=null)
+        public SerializeConfig(PrintingConfig<TOwner> printingConfig, Action<Delegate> ruleAddition, Action<CultureInfo> cultureInfoAddition = null)
         {
             this.ruleAddition = ruleAddition;
             this.cultureInfoAddition = cultureInfoAddition;
+            this.printingConfig = printingConfig;
+        }
+
+        public SerializeConfig(PrintingConfig<TOwner> printingConfig, Action<Delegate> ruleAddition, Action<int> setStringTrimming)
+        {
+            this.ruleAddition = ruleAddition;
+            this.setStringTrimming = setStringTrimming;
             this.printingConfig = printingConfig;
         }
 
@@ -41,10 +49,13 @@ namespace ObjectPrinting
         }
 
         PrintingConfig<TOwner> ISerializeConfig<TOwner, TPropType>.PrintingConfig => printingConfig;
+        void ISerializeConfig<TOwner, TPropType>.SetStringTrimming(int trimmerCount) => setStringTrimming(trimmerCount);
     }
 
     public interface ISerializeConfig<TOwner, TPropType>
     {
         PrintingConfig<TOwner> PrintingConfig { get; }
+
+        void SetStringTrimming(int trimmerCount);
     }
 }
